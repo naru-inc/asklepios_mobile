@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "565815503126",
+    "firebase_url": "https://asklepios-189516.firebaseio.com",
+    "project_id": "asklepios-189516",
+    "storage_bucket": "asklepios-189516.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:565815503126:android:886a01e900711a47",
+        "android_client_info": {
+          "package_name": "tech.naru.asklepios"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "565815503126-reqa84vkpprm2ctf5jmq30u3a52640u1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-1Q8BBffgnjUsLyRYLAcS_d9Kjzm9TS0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "565815503126-reqa84vkpprm2ctf5jmq30u3a52640u1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

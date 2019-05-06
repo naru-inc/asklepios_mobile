@@ -25,7 +25,7 @@ class _MainScreenState extends State < MainScreen > {
   void _changeQuestions(context){
 setState(() {
        icons = ['images/Normal.png'];
-       question = "Are you Sure ?";
+       question = "Are you Sure ?!";
 
 });
   }

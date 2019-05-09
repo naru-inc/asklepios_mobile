@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 class MainScreen extends StatefulWidget {
   @override
   State < StatefulWidget > createState() {
@@ -15,22 +15,17 @@ class _MainScreenState extends State < MainScreen > {
   var icons = ['images/pain.png', 'images/tired.png', 'images/headache.png'];
   var titles =['Douleur', 'Fatigue', 'Mal de tête'];
   var question = "Comment vous-sentez ce matin ?";
-  double _sliderValue = 0;
 
 
-  void _navigateToPostDetail(BuildContext context) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainScreen()));
+
+
+  void _updateValue(context) {
+    /* Firestore.instance.collection('Patient').document('r9jJrIhXjszul5ODzTsx')
+  .setData({ 'name': 'Ferid Ferida'});
+ */
   }
 
-
-  void _changeQuestions(context) {
-    setState(() {
-
-
-    });
-  }
-
-  Widget _emojisList(context) {
+  Widget _symptomsList(context) {
     List < Widget > list = new List < Widget > ();
 
     for (var i = 0; i < icons.length; i++) {
@@ -39,7 +34,7 @@ class _MainScreenState extends State < MainScreen > {
         Column(
           children: <Widget>[
    InkWell(
-          onTap: () => _changeQuestions(context),
+          onTap: () => _updateValue(context),
           child: Image(image: AssetImage(icons[i]),
             width: 60,
             height: 60, )),
@@ -80,7 +75,7 @@ class _MainScreenState extends State < MainScreen > {
               Padding(padding: EdgeInsets.all(50),
               child: 
                  Container(
-                child: _emojisList(context)
+                child: _symptomsList(context)
               ))
            
             

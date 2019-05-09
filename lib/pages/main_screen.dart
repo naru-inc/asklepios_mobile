@@ -20,9 +20,9 @@ class _MainScreenState extends State < MainScreen > {
 
 
   void _updateValue(context) {
-    /* Firestore.instance.collection('Patient').document('r9jJrIhXjszul5ODzTsx')
-  .setData({ 'name': 'Ferid Ferida'});
- */
+    Firestore.instance.collection('Patient').document('kkNY768ExgzqffbhUKmu')
+  .updateData({ 'name': 'Ferid Ferida'});
+ 
   }
 
   Widget _symptomsList(context) {

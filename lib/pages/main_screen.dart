@@ -14,14 +14,21 @@ class _MainScreenState extends State < MainScreen > {
 
   var icons = ['images/pain.png', 'images/tired.png', 'images/headache.png'];
   var titles =['Douleur', 'Fatigue', 'Mal de tête'];
+  var symptoms=['pain','tiredness','headache'];
   var question = "Comment vous-sentez ce matin ?";
 
 
 
 
-  void _updateValue(context) {
-    Firestore.instance.collection('Patient').document('kkNY768ExgzqffbhUKmu')
-  .updateData({ 'name': 'Ferid Ferida'});
+  void updateValue(name) {
+    var now = new DateTime.now();
+    var id = new DateTime.now().millisecondsSinceEpoch;
+    print(now);  
+    int pain =10;
+    
+    
+    Firestore.instance.collection('Patient').document('Hammadi').collection('Symptom').document(id.toString())
+    .setData({ 'name' : name, 'level' : pain, 'time': now});
  
   }
 
@@ -34,7 +41,7 @@ class _MainScreenState extends State < MainScreen > {
         Column(
           children: <Widget>[
    InkWell(
-          onTap: () => _updateValue(context),
+          onTap: () => updateValue(symptoms[i]),
           child: Image(image: AssetImage(icons[i]),
             width: 60,
             height: 60, )),

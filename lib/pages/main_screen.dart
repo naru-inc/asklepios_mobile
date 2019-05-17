@@ -1,3 +1,4 @@
+import 'package:asklepios/pages/symptom_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,19 +19,14 @@ class _MainScreenState extends State < MainScreen > {
   var question = "Comment vous-sentez ce matin ?";
 
 
+     void _navigateToPostDetail (BuildContext context, String symptomName, String symptomImage, String symptomId){
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SymptomScreen(symptomName: symptomName, symptomImageUrl: symptomImage,symptomId:symptomId ,)));
+      }
 
 
-  void updateValue(name) {
-    var now = new DateTime.now();
-    var id = new DateTime.now().millisecondsSinceEpoch;
-    print(now);  
-    int pain =10;
-    
-    
-    Firestore.instance.collection('Patient').document('Hammadi').collection('Symptom').document(id.toString())
-    .setData({ 'name' : name, 'level' : pain, 'time': now});
- 
-  }
+
+
+  
 
   Widget _symptomsList(context) {
     List < Widget > list = new List < Widget > ();
@@ -41,7 +37,7 @@ class _MainScreenState extends State < MainScreen > {
         Column(
           children: <Widget>[
    InkWell(
-          onTap: () => updateValue(symptoms[i]),
+          onTap: () => _navigateToPostDetail(context,titles[i], icons[i],symptoms[i]),
           child: Image(image: AssetImage(icons[i]),
             width: 60,
             height: 60, )),

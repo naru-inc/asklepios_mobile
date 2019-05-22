@@ -13,14 +13,20 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State < HomeScreen > {
 
-  
- 
+  TextEditingController controller = TextEditingController();
+
+  void gettingId() {
+    controller.addListener(() {
+      // Do something here
+    });
+  }
 
 
-     void _navigateToPostDetail (BuildContext context){
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainScreen()));
-      }
+  void _navigateToPostDetail(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainScreen()));
+  }
 
+  final _formKey = GlobalKey < FormState > ();
 
 
 
@@ -28,32 +34,57 @@ class _HomeScreenState extends State < HomeScreen > {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-      backgroundColor: Colors.blue,
-      body: Center(
-       
+      body: Container(
+        child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: < Widget > [
-              new Container(
-                 child: InkWell(
-          onTap: () => _navigateToPostDetail(context),
-                
-                child: new CircleAvatar(
-                  backgroundImage: AssetImage('images/per1.jpg')
-                )),
-                width: 150,
-                height: 150,
-                padding: const EdgeInsets.all(4.0), // borde width
-                  decoration: new BoxDecoration(
-                    color: Colors.white, // border color
-                    shape: BoxShape.circle,
-                  )
-              )
-            ],
+              Padding(
+                padding: EdgeInsets.all(100),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: < Widget > [
+                      TextFormField(
+                        decoration: const InputDecoration(
+                            icon: Icon(Icons.lock_outline),
+                            hintText: 'Quel est votre code d\'accés',
+                            labelText: 'Code d\'accés',
+                          ),
 
-          ),
-        ),
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Prière d\'indiquer votre code';
+                            }
+                          },
+                      ),
+                      Center(
+                          child: RaisedButton(
+                            onPressed: () {
+                              // Validate will return true if the form is valid, or false if
+                              // the form is invalid.
+                              if (_formKey.currentState.validate()) {
+                                // If the form is valid, we want to show a Snackbar
+                                _navigateToPostDetail(context);
+                              }
+                            },
+                            child: Text('Acceder'),
+                          ),
+                      ),
+                    ],
+                  ),
+                )
+              )
+
+
+            ], )
+
+        )
+
+        ,
+      )
     );
   }
 

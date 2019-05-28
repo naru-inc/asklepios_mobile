@@ -1,3 +1,4 @@
+import 'package:asklepios/pages/patientHistoric_screen.dart';
 import 'package:asklepios/pages/symptom_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -27,9 +28,7 @@ class _MainScreenState extends State < MainScreen > {
 
        static  List<Widget> _widgetOptions = <Widget>[
     SymptomsListScreen(),
-    Text(
-      'Index 1: Business',
-    ),
+  PatientHistoricScreen(),
     Text(
       'Index 2: School',    ),
   ];

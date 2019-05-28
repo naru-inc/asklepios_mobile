@@ -1,6 +1,7 @@
 import 'package:asklepios/pages/symptom_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:asklepios/pages/symptomsList_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 class MainScreen extends StatefulWidget {
   @override
@@ -18,10 +19,26 @@ class _MainScreenState extends State < MainScreen > {
   var symptoms=['pain','tiredness','headache'];
   var question = "Comment vous-sentez ce matin ?";
 
+  int _selectedIndex = 0;
 
      void _navigateToPostDetail (BuildContext context, String symptomName, String symptomImage, String symptomId){
         Navigator.of(context).push(MaterialPageRoute(builder: (context) => SymptomScreen(symptomName: symptomName, symptomImageUrl: symptomImage,symptomId:symptomId ,)));
       }
+
+       static  List<Widget> _widgetOptions = <Widget>[
+    SymptomsListScreen(),
+    Text(
+      'Index 1: Business',
+    ),
+    Text(
+      'Index 2: School',    ),
+  ];
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
 
 
 
@@ -64,34 +81,32 @@ class _MainScreenState extends State < MainScreen > {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: < Widget > [
-            Text("Bonjour",
-              style: TextStyle(fontWeight: FontWeight.w300, fontSize: 35)),
-            Text(question,
-              style: TextStyle(fontWeight: FontWeight.w300, fontSize: 22)),
-              Padding(padding: EdgeInsets.all(50),
-              child: 
-                 Container(
-                child: _symptomsList(context)
-              ))
-           
-            
+        child: _widgetOptions[_selectedIndex],
 
 
 
-
-
-          ], )
-
-
-
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ), 
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.bubble_chart),
+            title: Text('Symptomes'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.show_chart),
+            title: Text('Historique'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_today),
+            title: Text('Rendez-vous'),
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.amber[800],
+        onTap: _onItemTapped,
+      ),
     );
   }
 }

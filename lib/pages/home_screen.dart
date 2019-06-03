@@ -1,6 +1,12 @@
+import 'dart:io';
+
 import 'package:asklepios/pages/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:path/path.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -13,21 +19,44 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State < HomeScreen > {
 
-  TextEditingController controller = TextEditingController();
 
-  void gettingId() {
-    controller.addListener(() {
-      // Do something here
+  void getPatientInformations(docref){
+    Firestore.instance.collection('Patient').document(docref).get().then((DocumentSnapshot ds){
     });
   }
 
+  _saveToPref() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('patientKey', this.docref);
+  }
 
-  void _navigateToPostDetail(BuildContext context) {
+  _saveToLocal() async {
+    var databasesPath = await getDatabasesPath();
+    String path = join(databasesPath, 'demo.db');
+    try {
+    await Directory(databasesPath).create(recursive: true);
+    } catch (_) {}
+
+    // open the database
+    Database database = await openDatabase(path, version: 1,
+    onCreate: (Database db, int version) async {
+  // When creating the db, create the table
+    await db.execute(
+      'CREATE TABLE Symptoms (id INTEGER PRIMARY KEY, type TEXT, value INTEGER, date INTEGER)');
+});
+  }
+
+
+  void _navigateToPostDetail(BuildContext context,docref) {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => MainScreen()));
+    getPatientInformations(docref);
+    _saveToPref();
+    _saveToLocal();
+
   }
 
   final _formKey = GlobalKey < FormState > ();
-
+  String docref = "";
 
 
   @override
@@ -57,6 +86,9 @@ class _HomeScreenState extends State < HomeScreen > {
                           validator: (value) {
                             if (value.isEmpty) {
                               return 'Prière d\'indiquer votre code';
+                            }else{
+                              this.docref=value;
+
                             }
                           },
                       ),
@@ -67,7 +99,7 @@ class _HomeScreenState extends State < HomeScreen > {
                               // the form is invalid.
                               if (_formKey.currentState.validate()) {
                                 // If the form is valid, we want to show a Snackbar
-                                _navigateToPostDetail(context);
+                                _navigateToPostDetail(context,this.docref);
                               }
                             },
                             child: Text('Acceder'),

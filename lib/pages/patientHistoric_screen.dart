@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PatientHistoricScreen extends StatefulWidget {
 
@@ -20,56 +21,74 @@ class ClicksPerYear {
 }
 
 class _PatientHistoricScreenState extends State<PatientHistoricScreen> {
-  int _counter = 0;
+  
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+ @override
+  void initState() {
+    super.initState();
+     _getData();
+  }
+
+
+  void _getData(){
+var now = new DateTime.now();
+var lastMidnight = new DateTime(now.year, now.month, now.day - 1);
+
+    Firestore.instance
+    .collection('Patient').document('Hammadi').collection('Symptom')
+    .where("time", isGreaterThanOrEqualTo: lastMidnight)
+    .snapshots()
+    .listen((data) =>
+        data.documents.forEach((doc) => print(doc["name"])));
+  }
+
+  void _formatData(doc){
+    
   }
 
   @override
   Widget build(BuildContext context) {
    List<charts.Series<OrdinalSales, String>> _createSampleData() {
-    final desktopSalesData = [
+
+    final fatigueData = [
       new OrdinalSales('0-1', 5),
-      new OrdinalSales('1-2', 25),
-      new OrdinalSales('2-3', 100),
-      new OrdinalSales('3-4', 75),
-    ];
-
-    final tableSalesData = [
-      new OrdinalSales('0-1', 25),
-      new OrdinalSales('1-2', 50),
+      new OrdinalSales('1-2', 2),
       new OrdinalSales('2-3', 10),
-      new OrdinalSales('3-4', 20),
+      new OrdinalSales('3-4', 7),
     ];
 
-    final mobileSalesData = [
+    final nauseaData = [
+      new OrdinalSales('0-1', 2),
+      new OrdinalSales('1-2', 5),
+      new OrdinalSales('2-3', 1),
+      new OrdinalSales('3-4', 2),
+    ];
+
+    final throwUpData = [
       new OrdinalSales('0-1', 10),
-      new OrdinalSales('1-2', 15),
-      new OrdinalSales('2-3', 50),
-      new OrdinalSales('3-4', 45),
+      new OrdinalSales('1-2', 1),
+      new OrdinalSales('2-3', 5),
+      new OrdinalSales('3-4', 4),
     ];
 
     return [
       new charts.Series<OrdinalSales, String>(
         id: 'Fatigue',
-        domainFn: (OrdinalSales sales, _) => sales.year,
-        measureFn: (OrdinalSales sales, _) => sales.sales,
-        data: desktopSalesData,
+        domainFn: (OrdinalSales sales, _) => sales.hour,
+        measureFn: (OrdinalSales sales, _) => sales.level,
+        data: fatigueData,
       ),
       new charts.Series<OrdinalSales, String>(
         id: 'Nausée',
-        domainFn: (OrdinalSales sales, _) => sales.year,
-        measureFn: (OrdinalSales sales, _) => sales.sales,
-        data: tableSalesData,
+        domainFn: (OrdinalSales sales, _) => sales.hour,
+        measureFn: (OrdinalSales sales, _) => sales.level,
+        data: nauseaData,
       ),
       new charts.Series<OrdinalSales, String>(
         id: 'Vomissement',
-        domainFn: (OrdinalSales sales, _) => sales.year,
-        measureFn: (OrdinalSales sales, _) => sales.sales,
-        data: mobileSalesData,
+        domainFn: (OrdinalSales sales, _) => sales.hour,
+        measureFn: (OrdinalSales sales, _) => sales.level,
+        data: throwUpData,
       ),
     ];
   }
@@ -104,8 +123,8 @@ class _PatientHistoricScreenState extends State<PatientHistoricScreen> {
   }
 }
 class OrdinalSales {
-  final String year;
-  final int sales;
+  final String hour;
+  final int level;
 
-  OrdinalSales(this.year, this.sales);
+  OrdinalSales(this.hour, this.level);
 }

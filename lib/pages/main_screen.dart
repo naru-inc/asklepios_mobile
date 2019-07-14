@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:asklepios/pages/symptomsList_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'symptomsTimeline_screen.dart';
 class MainScreen extends StatefulWidget {
   @override
   State < StatefulWidget > createState() {
@@ -28,9 +30,9 @@ class _MainScreenState extends State < MainScreen > {
 
        static  List<Widget> _widgetOptions = <Widget>[
     SymptomsListScreen(),
-  PatientHistoricScreen(),
+  SymptomsTimelineScreen(),
     Text(
-      'Index 2: School',    ),
+      'Index 2',    ),
   ];
 
   void _onItemTapped(int index) {

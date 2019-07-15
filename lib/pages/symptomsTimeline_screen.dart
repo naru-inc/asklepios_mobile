@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:timeline_list/timeline.dart';
 import 'package:timeline_list/timeline_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:time_formatter/time_formatter.dart';
 
 class SymptomsTimelineScreen extends StatefulWidget {
   @override
@@ -27,7 +28,7 @@ class _SymptomsTimelineSceenState extends State < SymptomsTimelineScreen > {
 
  void _getData(){
 var now = new DateTime.now();
-var lastMidnight = new DateTime(now.year, now.month, now.day - 1);
+var lastMidnight = new DateTime(now.year, now.month, now.day - 7);
 
     Firestore.instance
     .collection('Patient').document('Hammadi').collection('Symptom')
@@ -47,7 +48,8 @@ var lastMidnight = new DateTime(now.year, now.month, now.day - 1);
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(doc["name"]),
-            Text(doc["level"].toString())
+            Text(formatTime(doc["time"].seconds*1000)),
+            Text(doc["level"].toString()),
           ],
         )), ),
       position: TimelineItemPosition.left,
@@ -63,36 +65,12 @@ var lastMidnight = new DateTime(now.year, now.month, now.day - 1);
 
 
 
-  List < TimelineModel > items = [
-    TimelineModel(Padding(padding: const EdgeInsets.all(20.00),
-        child: Center(child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text("Tiredness"),
-            Text("Il y a 3 heures"),
-            Text("9")
-          ],
-        )), ),
-      position: TimelineItemPosition.left,
-      iconBackground: Colors.transparent,
-      icon: Icon(Icons.blur_circular)),
-    TimelineModel(Padding(padding: const EdgeInsets.all(20.00),
-        child: Center(child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text("Tiredness"),
-            Text("Il y a 3 heures"),
-            Text("9")
-          ],
-        )), ),
-      position: TimelineItemPosition.right,
-      iconBackground: Colors.transparent,
-      icon: Icon(Icons.blur_circular)),
-  ];
+
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+
     return         Timeline(children: list, position: TimelinePosition.Center);
 
 

@@ -42,7 +42,7 @@ var lastMidnight = new DateTime(now.year, now.month, now.day - 7);
   void _addSymptomToList(doc){
         setState(() {
 
-    list.add(
+    list.insert(0,
       TimelineModel(Padding(padding: const EdgeInsets.all(20.00),
         child: Center(child: Column(
           mainAxisSize: MainAxisSize.min,

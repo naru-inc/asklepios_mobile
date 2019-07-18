@@ -31,7 +31,7 @@ class _SymptomScreenState extends State < SymptomScreen > {
 
   
 
-  double _value = 1;
+  double _value = 0;
   void _setvalue(double value) => setState(() => _value = value);
 
 
@@ -43,6 +43,10 @@ class _SymptomScreenState extends State < SymptomScreen > {
     Firestore.instance.collection('Patient').document('Hammadi').collection('Symptom').document(id.toString())
     .setData({ 'name' : widget.symptomId, 'level' : _value, 'time': now});
    Navigator.pop(context);
+
+  }
+
+  String updateSymptomPicture(value){
 
   }
 
@@ -58,22 +62,24 @@ class _SymptomScreenState extends State < SymptomScreen > {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: < Widget > [
-            Padding(padding: EdgeInsets.all(30),
-              child:
-              Image(image: AssetImage(widget.symptomImageUrl),
-                width: 60,
-                height: 60, ),
-            ),
-            Text('Quel est votre niveau de ' + widget.symptomName, style: TextStyle(fontWeight: FontWeight.w300, fontSize: 22)),
+            Container(padding: EdgeInsets.all(20),
+              child: new Center( child :         
+            Text('Quel est votre niveau de ' + widget.symptomName, style: TextStyle(fontWeight: FontWeight.w300, fontSize: 22))
+              )),
 
             if (widget.isLevel == true)
              Container(padding: EdgeInsets.all(20),
               child: new Center(
                 child: new Column(
                   children: < Widget > [
-                    new Slider(value: _value, onChanged: _setvalue, divisions: 9, min: 1, max: 10, ),
+                    new Slider(value: _value, onChanged: _setvalue, divisions: 10, min: 0, max: 10, ),
                     new Text('${(_value).round()}',style: TextStyle(fontWeight: FontWeight.w300, fontSize: 22)),
-
+Padding(padding: EdgeInsets.all(30),
+              child:
+              Image(image: AssetImage("images/Emojis/"+'${(_value).round()}'+".jpg"),
+                width: 100,
+                height: 100, ),
+            ),
                   ],
                 ),
               ), ),

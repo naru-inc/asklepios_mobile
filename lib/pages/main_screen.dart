@@ -1,3 +1,4 @@
+import 'package:asklepios/pages/painArea_screen.dart';
 import 'package:asklepios/pages/patientHistoric_screen.dart';
 import 'package:asklepios/pages/symptom_screen.dart';
 import 'package:flutter/material.dart';
@@ -96,7 +97,7 @@ class _MainScreenState extends State < MainScreen > {
           BottomNavigationBarItem(
             icon: Icon(Icons.show_chart),
             title: Text('Historique'),
-          ),
+          )
         
         ],
         currentIndex: _selectedIndex,

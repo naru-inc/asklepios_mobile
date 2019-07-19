@@ -1,3 +1,4 @@
+import 'package:asklepios/pages/painArea_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -42,8 +43,20 @@ class _SymptomScreenState extends State < SymptomScreen > {
     
     Firestore.instance.collection('Patient').document('Hammadi').collection('Symptom').document(id.toString())
     .setData({ 'name' : widget.symptomId, 'level' : _value, 'time': now});
+    if (widget.symptomId=='pain' && _value>0)
+    {
+    _navigateToPainScreen(context, id.toString());
+
+    }else{
    Navigator.pop(context);
 
+    }
+
+  }
+
+
+  void _navigateToPainScreen(BuildContext context, String symptomId) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => PainAreaScreen(symptomId: symptomId )));
   }
 
   String updateSymptomPicture(value){

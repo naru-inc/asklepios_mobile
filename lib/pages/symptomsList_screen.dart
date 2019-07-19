@@ -14,9 +14,9 @@ class SymptomsListScreen extends StatefulWidget {
 
 class _SymptomsListScreenState extends State < SymptomsListScreen > {
 
-  var icons = ['images/pain.png', 'images/tiredness.png', 'images/headache.png', 'images/depression.png', 'images/anxiety.png', 'images/sleep.png', 'images/appetite.png', 'images/respiration.png', 'images/wellbeing.png'];
-  var titles = ['Douleur', 'Fatigue', 'Nausée', 'Déprime', 'Anxiété', 'Somnolence', 'Manque d\'appétit', 'Peine à respirer ', 'Bien-etre'];
-  var symptoms = ['pain', 'tiredness', 'headache', 'depression', 'anxiety', 'drawziness', 'appetite', 'breathe', 'well-being'];
+  var icons = ['images/pain.png', 'images/tiredness.png', 'images/headache.png', 'images/depression.png', 'images/anxiety.png', 'images/sleep.png', 'images/appetite.png', 'images/respiration.png'];
+  var titles = ['Douleur', 'Fatigue', 'Nausée', 'Déprime', 'Anxiété', 'Somnolence', 'Manque d\'appétit', 'Peine à respirer '];
+  var symptoms = ['pain', 'tiredness', 'headache', 'depression', 'anxiety', 'drawziness', 'appetite', 'breathe'];
   var question = "Comment vous-sentez ce matin ?";
 
   void _navigateToPostDetail(BuildContext context, String symptomName, String symptomImage, String symptomId) {

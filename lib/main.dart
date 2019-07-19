@@ -1,4 +1,5 @@
 import 'package:asklepios/pages/home_screen.dart';
+import 'package:asklepios/pages/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -84,6 +85,6 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return HomeScreen();
+    return MainScreen();
   }
 }

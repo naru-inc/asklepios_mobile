@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:asklepios/pages/main_screen.dart';
+import 'package:asklepios/pages/symptom_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +9,15 @@ import 'package:path/path.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 
+void main() {
+  runApp(MaterialApp(
+    initialRoute: '/main',
+    routes: <String, WidgetBuilder>{
+      '/access': (context) => HomeScreen(),
+      '/home': (context) => MainScreen(),
+    },
+  ));
+}
 class HomeScreen extends StatefulWidget {
   @override
   State < StatefulWidget > createState() {

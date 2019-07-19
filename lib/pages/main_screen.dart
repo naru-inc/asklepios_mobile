@@ -31,8 +31,6 @@ class _MainScreenState extends State < MainScreen > {
        static  List<Widget> _widgetOptions = <Widget>[
     SymptomsListScreen(),
   SymptomsTimelineScreen(),
-    Text(
-      'Index 2',    ),
   ];
 
   void _onItemTapped(int index) {
@@ -99,10 +97,7 @@ class _MainScreenState extends State < MainScreen > {
             icon: Icon(Icons.show_chart),
             title: Text('Historique'),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_today),
-            title: Text('Rendez-vous'),
-          ),
+        
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],

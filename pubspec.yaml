@@ -33,7 +33,6 @@ dependencies:
   time_formatter: ^1.0.0
   flare_flutter: any
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

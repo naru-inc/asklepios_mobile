@@ -98,13 +98,13 @@ GestureDetector(
 
             var headTouched = localTouchPosition.dy < AnimationHeight / 3.2;
 
-            var chestTouched = (localTouchPosition.dy < AnimationHeight / 2.3) && (localTouchPosition.dy > AnimationHeight / 3.2);
+            var chestTouched = (localTouchPosition.dy < AnimationHeight / 2.1) && (localTouchPosition.dy > AnimationHeight / 3.2);
 
             var stomachTouched =
-              (localTouchPosition.dy < (AnimationHeight / 1.7)) && (localTouchPosition.dy > (AnimationHeight / 2.3));
+              (localTouchPosition.dy < (AnimationHeight / 1.7)) && (localTouchPosition.dy > (AnimationHeight / 2));
 
             var palvTouched =
-              (localTouchPosition.dy < (AnimationHeight / 1.5)) && (localTouchPosition.dy > (AnimationHeight / 1.7));
+              (localTouchPosition.dy < (AnimationHeight / 1.4)) && (localTouchPosition.dy > (AnimationHeight / 1.7));
 
             var legTouched =
               (localTouchPosition.dy < (AnimationHeight / 1.88)) && (localTouchPosition.dy > (AnimationHeight / 1.2));

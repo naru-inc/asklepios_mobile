@@ -11,7 +11,7 @@ description: A new Flutter project.
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.1.0+1
+version: 1.2.0+1
 
 environment:
   sdk: ">=2.2.2 <3.0.0"
@@ -32,6 +32,11 @@ dependencies:
   timeline_list: ^0.0.3
   time_formatter: ^1.0.0
   flare_flutter: any
+  automl_mlkit:
+    git:
+      url: git://github.com/jobehi/plugin_plugin.git
+  image_picker: ^0.6.0+17
+  path_provider: ^1.1.2
 
 dev_dependencies:
   flutter_test:
@@ -53,6 +58,9 @@ flutter:
     - images/
     - images/Emojis/
     - flare/
+    - mlkit/manifest.json
+    - mlkit/model.tflite
+    - mlkit/dict.txt
 
   # To add assets to your application, add an assets section, like this:
   # assets:

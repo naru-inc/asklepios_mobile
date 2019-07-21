@@ -1,5 +1,6 @@
 import 'package:asklepios/pages/painArea_screen.dart';
 import 'package:asklepios/pages/patientHistoric_screen.dart';
+import 'package:asklepios/pages/pill_screen.dart';
 import 'package:asklepios/pages/symptom_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -32,6 +33,7 @@ class _MainScreenState extends State < MainScreen > {
        static  List<Widget> _widgetOptions = <Widget>[
     SymptomsListScreen(),
   SymptomsTimelineScreen(),
+  PillScreen()
   ];
 
   void _onItemTapped(int index) {
@@ -97,6 +99,10 @@ class _MainScreenState extends State < MainScreen > {
           BottomNavigationBarItem(
             icon: Icon(Icons.show_chart),
             title: Text('Historique'),
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.show_chart),
+            title: Text('Pills'),
           )
         
         ],

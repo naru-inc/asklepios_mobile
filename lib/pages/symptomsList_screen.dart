@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:asklepios/pages/symptom_screen.dart';
+import 'package:intro_slider/intro_slider.dart';
 
 class SymptomsListScreen extends StatefulWidget {
   @override
@@ -81,23 +82,5 @@ class _SymptomsListScreenState extends State < SymptomsListScreen > {
        ]
      );
 
-
-      /* Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-
-      children: < Widget > [
-        Text("Bonjour",
-          style: TextStyle(fontWeight: FontWeight.w300, fontSize: 35)),
-        Text(question,
-          style: TextStyle(fontWeight: FontWeight.w300, fontSize: 22)),
-        Padding(padding: EdgeInsets.all(50),
-          child:
-          Container(
-            child:
-             _symptomsList(context)
-          ))
-
-      ]); */
   }
 }

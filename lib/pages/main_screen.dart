@@ -19,11 +19,6 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State < MainScreen > {
 
-  var icons = ['images/pain.png', 'images/tired.png', 'images/headache.png'];
-  var titles =['Douleur', 'Fatigue', 'Mal de tête'];
-  var symptoms=['pain','tiredness','headache'];
-  var question = "Comment vous-sentez ce matin ?";
-
   int _selectedIndex = 0;
 
      void _navigateToPostDetail (BuildContext context, String symptomName, String symptomImage, String symptomId){
@@ -45,40 +40,6 @@ class _MainScreenState extends State < MainScreen > {
 
 
 
-  
-
-  Widget _symptomsList(context) {
-    List < Widget > list = new List < Widget > ();
-
-    for (var i = 0; i < icons.length; i++) {
-      list.add(new Padding(padding: EdgeInsets.all(30),
-        child:
-        Column(
-          children: <Widget>[
-   InkWell(
-          onTap: () => _navigateToPostDetail(context,titles[i], icons[i],symptoms[i]),
-          child: Image(image: AssetImage(icons[i]),
-            width: 60,
-            height: 60, )),
-            Text(titles[i],
-              style: TextStyle(fontWeight: FontWeight.w300, fontSize: 25)),
-
-
-            
-          ],
-        )
-      ));
-
-
-    }
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: list
-    );
-
-  }
 
 
   @override

@@ -90,27 +90,27 @@ Navigator.popUntil(context, ModalRoute.withName(Navigator.defaultRouteName));
         Column(
           children: <Widget>[
             Padding(padding: EdgeInsets.all(50)),
-            Text("Indiquez où est-ce que vous avez mal"),
+            Text('Indiquez où est-ce que vous avez mal', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25)),
 GestureDetector(
           onTapUp: (tapInfo) {
             var localTouchPosition = (context.findRenderObject() as RenderBox)
               .globalToLocal(tapInfo.globalPosition);
 
-            var headTouched = localTouchPosition.dy < AnimationHeight / 3.2;
+            var headTouched = localTouchPosition.dy < (AnimationHeight / 3.2)+50;
 
-            var chestTouched = (localTouchPosition.dy < AnimationHeight / 2.1) && (localTouchPosition.dy > AnimationHeight / 3.2);
+            var chestTouched = (localTouchPosition.dy < (AnimationHeight / 2.1)+50) && (localTouchPosition.dy > (AnimationHeight / 3.2)+50);
 
             var stomachTouched =
-              (localTouchPosition.dy < (AnimationHeight / 1.7)) && (localTouchPosition.dy > (AnimationHeight / 2));
+              (localTouchPosition.dy < (AnimationHeight / 1.7)+50) && (localTouchPosition.dy > (AnimationHeight / 2)+50);
 
             var palvTouched =
-              (localTouchPosition.dy < (AnimationHeight / 1.4)) && (localTouchPosition.dy > (AnimationHeight / 1.7));
+              (localTouchPosition.dy < (AnimationHeight / 1.4)+50) && (localTouchPosition.dy > (AnimationHeight / 1.7)+50);
 
             var legTouched =
-              (localTouchPosition.dy < (AnimationHeight / 1.88)) && (localTouchPosition.dy > (AnimationHeight / 1.2));
+              (localTouchPosition.dy < (AnimationHeight / 1.88)+50) && (localTouchPosition.dy > (AnimationHeight / 1.2)+50);
             var footTouched =
 
-              (localTouchPosition.dy > (AnimationHeight / 1.2));
+              (localTouchPosition.dy > (AnimationHeight / 1.2)+50);
 
             // Call our animation in our conditional checks
             if (headTouched) {

@@ -75,10 +75,16 @@ class _SymptomScreenState extends State < SymptomScreen > {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: < Widget > [
-            Container(padding: EdgeInsets.all(20),
+            Container(padding: EdgeInsets.all(10),
               child: new Center( child :         
-            Text('Quel est votre niveau de ' + widget.symptomName, style: TextStyle(fontWeight: FontWeight.w300, fontSize: 22))
+            Text('Quel est votre niveau de ' + widget.symptomName.toLowerCase() + ' ?', textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 25))
               )),
+              Padding(padding: EdgeInsets.all(80),
+           ),
+              Image(image: AssetImage("images/Emojis/"+'${(_value).round()}'+".png"),
+                width: 100,
+                height: 100, ),
+            
 
             if (widget.isLevel == true)
              Container(padding: EdgeInsets.all(20),
@@ -87,12 +93,7 @@ class _SymptomScreenState extends State < SymptomScreen > {
                   children: < Widget > [
                     new Slider(value: _value, onChanged: _setvalue, divisions: 10, min: 0, max: 10, ),
                     new Text('${(_value).round()}',style: TextStyle(fontWeight: FontWeight.w300, fontSize: 22)),
-Padding(padding: EdgeInsets.all(30),
-              child:
-              Image(image: AssetImage("images/Emojis/"+'${(_value).round()}'+".jpg"),
-                width: 100,
-                height: 100, ),
-            ),
+
                   ],
                 ),
               ), ),

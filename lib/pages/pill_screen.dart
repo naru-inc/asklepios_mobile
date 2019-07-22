@@ -96,7 +96,7 @@ class PillScreen extends StatefulWidget {
         _imageFile = imageFile;
       });
       Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text("No labels found")));
+          .showSnackBar(SnackBar(content: Text("Médicament non trouvé")));
     } else {
       final label = results[0]["label"];
       final confidence = (results[0]["confidence"] * 100).toStringAsFixed(2);
@@ -133,7 +133,7 @@ class PillScreen extends StatefulWidget {
                     color: Colors.blue[600],
                     onPressed: loadImageAndInfer,
                     textColor: Colors.white,
-                    child: Text("CHOOSE A PHOTO"),
+                    child: Text("Choisissez une image"),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 28),

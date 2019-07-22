@@ -9,7 +9,7 @@ class SymptomScreen extends StatefulWidget {
   final String symptomId;
   final bool isLevel;
 
-  const SymptomScreen({
+ const SymptomScreen({
     Key key,
     this.symptomName,
     this.symptomImageUrl,
@@ -27,6 +27,7 @@ class SymptomScreen extends StatefulWidget {
 }
 
 class _SymptomScreenState extends State < SymptomScreen > {
+
 
 
 
@@ -67,6 +68,8 @@ class _SymptomScreenState extends State < SymptomScreen > {
 
   @override
   Widget build(BuildContext context) {
+       var verbal = ['Pas de '+widget.symptomName.toLowerCase(),widget.symptomName.toLowerCase()+' légere',widget.symptomName.toLowerCase()+' faible',widget.symptomName.toLowerCase()+' faible',widget.symptomName.toLowerCase()+' modérée',widget.symptomName.toLowerCase()+' modérée', widget.symptomName.toLowerCase()+' forte', widget.symptomName.toLowerCase()+' forte',widget.symptomName.toLowerCase()+' trés forte',widget.symptomName.toLowerCase()+' trés forte', 'pire '+widget.symptomName.toLowerCase()+' imaginable'];
+
     // TODO: implement build
     return Scaffold(
       body: Center(
@@ -81,6 +84,8 @@ class _SymptomScreenState extends State < SymptomScreen > {
               )),
               Padding(padding: EdgeInsets.all(80),
            ),
+           Text(verbal[(_value).round()], textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.w300, fontSize: 15)),
+                         Padding(padding: EdgeInsets.all(10)),
               Image(image: AssetImage("images/Emojis/"+'${(_value).round()}'+".png"),
                 width: 100,
                 height: 100, ),

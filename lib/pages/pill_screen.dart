@@ -1,117 +1,98 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:ui';
+// Copyright 2019 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
+import 'package:asklepios/utils/scanner_utils.dart';
+import 'package:camera/camera.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 import 'detector_painters.dart';
 
-class PictureScanner extends StatefulWidget {
+class CameraPreviewScanner extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _PictureScannerState();
+  State<StatefulWidget> createState() => _CameraPreviewScannerState();
 }
 
-class _PictureScannerState extends State<PictureScanner> {
-  File _imageFile;
-  Size _imageSize;
+class _CameraPreviewScannerState extends State<CameraPreviewScanner> {
   dynamic _scanResults;
+  CameraController _camera;
   Detector _currentDetector = Detector.text;
+  bool _isDetecting = false;
+  CameraLensDirection _direction = CameraLensDirection.back;
+  bool _isActivated = false;
 
+  final BarcodeDetector _barcodeDetector =
+      FirebaseVision.instance.barcodeDetector();
+  final FaceDetector _faceDetector = FirebaseVision.instance.faceDetector();
   final ImageLabeler _imageLabeler = FirebaseVision.instance.imageLabeler();
   final ImageLabeler _cloudImageLabeler =
       FirebaseVision.instance.cloudImageLabeler();
   final TextRecognizer _recognizer = FirebaseVision.instance.textRecognizer();
+  final TextRecognizer _cloudRecognizer =
+      FirebaseVision.instance.cloudTextRecognizer();
 
-  Future<void> _getAndScanImage() async {
-    setState(() {
-      _imageFile = null;
-      _imageSize = null;
-    });
-
-    final File imageFile =
-        await ImagePicker.pickImage(source: ImageSource.gallery);
-
-    if (imageFile != null) {
-      _getImageSize(imageFile);
-      _scanImage(imageFile);
-    }
-
-    setState(() {
-      _imageFile = imageFile;
-    });
+  @override
+  void initState() {
+    super.initState();
   }
 
-  Future<void> _getImageSize(File imageFile) async {
-    final Completer<Size> completer = Completer<Size>();
+  void _initializeCamera() async {
+    final CameraDescription description =
+        await ScannerUtils.getCamera(_direction);
 
-    final Image image = Image.file(imageFile);
-    image.image.resolve(const ImageConfiguration()).addListener(
-      ImageStreamListener((ImageInfo info, bool _) {
-        completer.complete(Size(
-          info.image.width.toDouble(),
-          info.image.height.toDouble(),
-        ));
-      }),
+    _camera = CameraController(
+      description,
+      defaultTargetPlatform == TargetPlatform.iOS
+          ? ResolutionPreset.low
+          : ResolutionPreset.medium,
     );
+    await _camera.initialize();
 
-    final Size imageSize = await completer.future;
-    setState(() {
-      _imageSize = imageSize;
+    _camera.startImageStream((CameraImage image) {
+      if (_isDetecting) return;
+
+      _isDetecting = true;
+
+      ScannerUtils.detect(
+        image: image,
+        detectInImage: _getDetectionMethod(),
+        imageRotation: description.sensorOrientation,
+      ).then(
+        (dynamic results) {
+          if (_currentDetector == null) return;
+          setState(() {
+            _scanResults = results;
+            debugPrint(results.blocks[0].text);
+          });
+        },
+      ).whenComplete(() => _isDetecting = false);
     });
   }
 
-  Future<void> _scanImage(File imageFile) async {
-    setState(() {
-      _scanResults = null;
-    });
-
-    final FirebaseVisionImage visionImage =
-        FirebaseVisionImage.fromFile(imageFile);
-
-    dynamic results;
-    switch (_currentDetector) {
-
-      case Detector.label:
-        results = await _imageLabeler.processImage(visionImage);
-        break;
-      case Detector.cloudLabel:
-        results = await _cloudImageLabeler.processImage(visionImage);
-        break;
-      case Detector.text:
-        results = await _recognizer.processImage(visionImage);
-        break;
-      default:
-        return;
-    }
-
-    setState(() {
-      _scanResults = results;
-    });
+  Future<dynamic> Function(FirebaseVisionImage image) _getDetectionMethod() {
+        return _recognizer.processImage;
   }
 
-  CustomPaint _buildResults(Size imageSize, dynamic results) {
-    print("here are the results");
-     for (TextBlock block in results.blocks) {
-       print(block.text);
-      
+  Widget _buildResults() {
+    const Text noResultsText = Text('No results!');
+
+    if (_scanResults == null ||
+        _camera == null ||
+        !_camera.value.isInitialized) {
+      return noResultsText;
     }
+
     CustomPainter painter;
 
-    switch (_currentDetector) {
-      
-      case Detector.label:
-        painter = LabelDetectorPainter(_imageSize, results);
-        break;
-     
-      case Detector.text:
-        painter = TextDetectorPainter(_imageSize, results);
-        break;
-    
-      default:
-        break;
-    }
+    final Size imageSize = Size(
+      _camera.value.previewSize.height,
+      _camera.value.previewSize.width,
+    );
+
+        if (_scanResults is! VisionText) return noResultsText;
+        painter = TextDetectorPainter(imageSize, _scanResults); 
 
     return CustomPaint(
       painter: painter,
@@ -121,65 +102,95 @@ class _PictureScannerState extends State<PictureScanner> {
   Widget _buildImage() {
     return Container(
       constraints: const BoxConstraints.expand(),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: Image.file(_imageFile).image,
-          fit: BoxFit.fill,
-        ),
-      ),
-      child: _imageSize == null || _scanResults == null
+      child: _camera == null
           ? const Center(
               child: Text(
-                'Scanning...',
+                'Initializing Camera...',
                 style: TextStyle(
                   color: Colors.green,
                   fontSize: 30.0,
                 ),
               ),
             )
-          : _buildResults(_imageSize, _scanResults),
+          : Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                CameraPreview(_camera),
+                _buildResults(),
+              ],
+            ),
     );
+  }
+
+  void _activateCamera(){
+    if(_isDetecting){
+      _stopCamera();
+
+    }else{
+              _initializeCamera();
+
+    }
+
+  }
+
+  void _stopCamera() async{
+    await _camera.stopImageStream();
+    await _camera.dispose();
+  }
+
+  void _toggleCameraDirection() async {
+    if (_direction == CameraLensDirection.back) {
+      _direction = CameraLensDirection.front;
+    } else {
+      _direction = CameraLensDirection.back;
+    }
+
+    await _camera.stopImageStream();
+    await _camera.dispose();
+
+    setState(() {
+      _camera = null;
+    });
+
+    _initializeCamera();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Picture Scanner'),
+        title: const Text('ML Vision Example'),
         actions: <Widget>[
           PopupMenuButton<Detector>(
             onSelected: (Detector result) {
               _currentDetector = result;
-              if (_imageFile != null) _scanImage(_imageFile);
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<Detector>>[
-              
-            
+          
               const PopupMenuItem<Detector>(
                 child: Text('Detect Text'),
                 value: Detector.text,
               ),
-          
+            
             ],
           ),
         ],
       ),
-      body: _imageFile == null
-          ? const Center(child: Text('No image selected.'))
-          : _buildImage(),
+      body: _buildImage(),
       floatingActionButton: FloatingActionButton(
-        onPressed: _getAndScanImage,
-        tooltip: 'Pick Image',
-        child: const Icon(Icons.add_a_photo),
+        onPressed: _activateCamera,
+        child:  const Icon(Icons.camera_front)
       ),
     );
   }
 
   @override
   void dispose() {
-    _imageLabeler.close();
-    _cloudImageLabeler.close();
-    _recognizer.close();
+    _camera.dispose().then((_) {
+      _recognizer.close();
+    });
+
+    _currentDetector = null;
     super.dispose();
   }
 }

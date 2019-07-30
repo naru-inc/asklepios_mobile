@@ -33,11 +33,10 @@ dependencies:
   time_formatter: ^1.0.0
   flare_flutter: any
   intro_slider: ^1.2.0
-  automl_mlkit:
-    git:
-      url: git://github.com/jobehi/plugin_plugin.git
+  firebase_ml_vision: ^0.9.2
   image_picker: ^0.6.0+17
   path_provider: ^1.1.2
+
 
 dev_dependencies:
   flutter_test:

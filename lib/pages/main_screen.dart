@@ -28,7 +28,7 @@ class _MainScreenState extends State < MainScreen > {
        static  List<Widget> _widgetOptions = <Widget>[
     SymptomsListScreen(),
   SymptomsTimelineScreen(),
-  PillScreen()
+  PictureScanner()
   ];
 
   void _onItemTapped(int index) {

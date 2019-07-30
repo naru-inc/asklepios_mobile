@@ -1,147 +1,185 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
-import 'package:automl_mlkit/automl_mlkit.dart';
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
 
-class PillScreen extends StatefulWidget {
+import 'detector_painters.dart';
+
+class PictureScanner extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() {
-    // TODO: implement createState
-    return _PillScreenState();
-      }
-    
-    }
-    
-    class _PillScreenState extends State <PillScreen > {
-      String _modelLoadStatus = 'unknown';
-      File _imageFile;
-      String _inferenceResult;
-       @override
-  void initState() {
-    super.initState();
-    loadModel();
-  }
+  State<StatefulWidget> createState() => _PictureScannerState();
+}
 
+class _PictureScannerState extends State<PictureScanner> {
+  File _imageFile;
+  Size _imageSize;
+  dynamic _scanResults;
+  Detector _currentDetector = Detector.text;
 
-   Future<void> loadModel() async {
-    String dataset = "medicine35";
-    await createLocalFiles(dataset);
-    String modelLoadStatus;
-    try {
-      await AutomlMlkit.loadModelFromCache(dataset: dataset);
-      modelLoadStatus = "AutoML model successfully loaded";
-    } on PlatformException catch (e) {
-      modelLoadStatus = "Error loading model";
-      print("error from platform on calling loadModelFromCache");
-      print(e.toString());
-    }
+  final ImageLabeler _imageLabeler = FirebaseVision.instance.imageLabeler();
+  final ImageLabeler _cloudImageLabeler =
+      FirebaseVision.instance.cloudImageLabeler();
+  final TextRecognizer _recognizer = FirebaseVision.instance.textRecognizer();
 
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-    if (!mounted) return;
-
+  Future<void> _getAndScanImage() async {
     setState(() {
-      _modelLoadStatus = modelLoadStatus;
+      _imageFile = null;
+      _imageSize = null;
     });
-  }
 
-
-
-   Future<void> createLocalFiles(String folder) async {
-    Directory tempDir = await getTemporaryDirectory();
-    final Directory modelDir = Directory("${tempDir.path}/$folder");
-    if (!modelDir.existsSync()) {
-      modelDir.createSync();
-    }
-    final filenames = ["manifest.json", "model.tflite", "dict.txt"];
-
-    for (String filename in filenames) {
-      final File file = File("${modelDir.path}/$filename");
-      if (!file.existsSync()) {
-        print("Copying file: $filename");
-        await copyFileFromAssets(filename, file);
-      }
-    }
-  }
-
-    /// copies file from assets to dst file
-  Future<void> copyFileFromAssets(String filename, File dstFile) async {
-    ByteData data = await rootBundle.load("mlkit/$filename");
-    final buffer = data.buffer;
-    dstFile.writeAsBytesSync(
-        buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
-  }
-
-   Future<void> loadImageAndInfer() async {
     final File imageFile =
         await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    if (imageFile == null) {
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text("Can't read image")));
-      return;
+    if (imageFile != null) {
+      _getImageSize(imageFile);
+      _scanImage(imageFile);
     }
 
-      final results =
-        await AutomlMlkit.runModelOnImage(imagePath: imageFile.path);
-    //print("Got results" + results[0].toString());
-    if (results.isEmpty) {
-      setState(() {
-        _imageFile = imageFile;
-      });
-      Scaffold.of(context)
-          .showSnackBar(SnackBar(content: Text("Médicament non trouvé")));
-    } else {
-      final label = results[0]["label"];
-      final confidence = (results[0]["confidence"] * 100).toStringAsFixed(2);
-      setState(() {
-        _imageFile = imageFile;
-        _inferenceResult = "$label: $confidence \%";
-      });
-    }
+    setState(() {
+      _imageFile = imageFile;
+    });
   }
 
-   @override
-  Widget build(BuildContext context) {
-  
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _inferenceResult == null
-                      ? Container()
-                      : Text(
-                          "$_inferenceResult",
-                          style: TextStyle(fontSize: 20),
-                        ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: _imageFile == null
-                        ? Container()
-                        : Container(
-                            height: 200,
-                            child: Image.file(_imageFile),
-                          ),
-                  ),
-                  FlatButton(
-                    color: Colors.blue[600],
-                    onPressed: loadImageAndInfer,
-                    textColor: Colors.white,
-                    child: Text("Choisissez une image"),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 28),
-                    child: Text('Model load status: $_modelLoadStatus\n'),
-                  ),
-                ],
+  Future<void> _getImageSize(File imageFile) async {
+    final Completer<Size> completer = Completer<Size>();
+
+    final Image image = Image.file(imageFile);
+    image.image.resolve(const ImageConfiguration()).addListener(
+      ImageStreamListener((ImageInfo info, bool _) {
+        completer.complete(Size(
+          info.image.width.toDouble(),
+          info.image.height.toDouble(),
+        ));
+      }),
+    );
+
+    final Size imageSize = await completer.future;
+    setState(() {
+      _imageSize = imageSize;
+    });
+  }
+
+  Future<void> _scanImage(File imageFile) async {
+    setState(() {
+      _scanResults = null;
+    });
+
+    final FirebaseVisionImage visionImage =
+        FirebaseVisionImage.fromFile(imageFile);
+
+    dynamic results;
+    switch (_currentDetector) {
+
+      case Detector.label:
+        results = await _imageLabeler.processImage(visionImage);
+        break;
+      case Detector.cloudLabel:
+        results = await _cloudImageLabeler.processImage(visionImage);
+        break;
+      case Detector.text:
+        results = await _recognizer.processImage(visionImage);
+        break;
+      default:
+        return;
+    }
+
+    setState(() {
+      _scanResults = results;
+    });
+  }
+
+  CustomPaint _buildResults(Size imageSize, dynamic results) {
+    print("here are the results");
+     for (TextBlock block in results.blocks) {
+       print(block.text);
+      
+    }
+    CustomPainter painter;
+
+    switch (_currentDetector) {
+      
+      case Detector.label:
+        painter = LabelDetectorPainter(_imageSize, results);
+        break;
+     
+      case Detector.text:
+        painter = TextDetectorPainter(_imageSize, results);
+        break;
+    
+      default:
+        break;
+    }
+
+    return CustomPaint(
+      painter: painter,
+    );
+  }
+
+  Widget _buildImage() {
+    return Container(
+      constraints: const BoxConstraints.expand(),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: Image.file(_imageFile).image,
+          fit: BoxFit.fill,
+        ),
+      ),
+      child: _imageSize == null || _scanResults == null
+          ? const Center(
+              child: Text(
+                'Scanning...',
+                style: TextStyle(
+                  color: Colors.green,
+                  fontSize: 30.0,
+                ),
               ),
-            );
+            )
+          : _buildResults(_imageSize, _scanResults),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Picture Scanner'),
+        actions: <Widget>[
+          PopupMenuButton<Detector>(
+            onSelected: (Detector result) {
+              _currentDetector = result;
+              if (_imageFile != null) _scanImage(_imageFile);
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<Detector>>[
+              
+            
+              const PopupMenuItem<Detector>(
+                child: Text('Detect Text'),
+                value: Detector.text,
+              ),
           
+            ],
+          ),
+        ],
+      ),
+      body: _imageFile == null
+          ? const Center(child: Text('No image selected.'))
+          : _buildImage(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _getAndScanImage,
+        tooltip: 'Pick Image',
+        child: const Icon(Icons.add_a_photo),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _imageLabeler.close();
+    _cloudImageLabeler.close();
+    _recognizer.close();
+    super.dispose();
   }
 }
